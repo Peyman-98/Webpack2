@@ -1,1 +1,0 @@
-webpackJsonp([0],{"./src/app.js":function(s,e,c){"use strict";var o=c("./node_modules/jquery/dist/jquery.js"),n=function(s){return s&&s.__esModule?s:{default:s}}(o);c("./src/app.scss"),console.log("Hi There"),(0,n.default)(document).ready(function(){(0,n.default)(".heading").css("background","yellow"),console.log(this)})},"./src/app.scss":function(s,e){}},["./src/app.js"]);
