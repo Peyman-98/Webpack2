@@ -2,19 +2,9 @@
 
 ### installation :
 ---
-install the packages with :
-```javascript
-npm install
-```
+install the packages with `npm install`
 
 ### Usage:
 ---
-```javascript
-npm run dev
-```
- for Development Mode
-
-```javascript
-npm run prod
-```
-for Production Mode
+Run `npm run dev` For Development Mode
+Run `npm run prod` For Production Mode
