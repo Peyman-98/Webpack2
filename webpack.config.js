@@ -14,13 +14,24 @@ var cssProd = ExtractTextPlugin.extract({
 });
 var cssConfig = isProd ? cssProd :cssDev;
 
-module.exports = {
+const config = {
+    cache: true,
+    // entry: './src/app.js',
     entry: {
        bundle: './src/app.js',
-       vendor: 'jquery'
+       vendor: [
+           './node_modules/jquery/dist/jquery.min.js',
+           './node_modules/gsap/src/minified/TweenMax.min.js',
+           './node_modules/fullpage.js/dist/jquery.fullpage.min.js'
+        //    './node_modules/scrollmagic/scrollmagic/minified/ScrollMagic.min.js',
+        //    './node_modules/scrollmagic/scrollmagic/minified/plugins/animation.gsap.min.js',
+        //    './node_modules/scrollmagic/scrollmagic/minified/plugins/debug.addIndicators.min.js'
+
+        ]
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
+        // filename: 'bundle.js'
         filename: '[name].js'
     },
     module: {
@@ -49,28 +60,26 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
+                loader: 'imports-loader?define=>false'},
+            {
+                test: /\.js$/,
+                exclude: /(node_modules|bower_components)/,
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['env']
+                        presets: ['env'],
+                        cacheDirectory: true
                     }
                 }
             }
         ]
-    },
-    devServer: {
-        contentBase: path.join(__dirname,"dist"),
-        compress: true,
-        hot: !isProd,
-        stats: "errors-only",
-        open: true
     },
     plugins: [
         new HtmlWebpackPlugin({
             // minify:{
             //     collapseWhitespace : true
             // },
-            hash: true,
+            hash: false,
             template: './src/index.html',
         }),
         new ExtractTextPlugin({
@@ -78,18 +87,34 @@ module.exports = {
             disable: !isProd,
             allChunks: true
         }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'vendor'
+        }),
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery'
+        })
+    ]
+}
+if (isProd) {
+    config.plugins.push(
         new PurifyCSSPlugin({
             paths: glob.sync(path.join(__dirname, 'src/*.html')),
         }),
-        new UglifyJSPlugin(),
+        new UglifyJSPlugin()
+    );
+} else {
+    config.devServer = {
+        contentBase: path.join(__dirname,"dist"),
+        // compress: true,
+        hot: true,
+        stats: "errors-only",
+        open: true,
+    }
+    config.plugins.push(
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.NamedModulesPlugin(),
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'vendor'
-        })
-        // new webpack.ProvidePlugin({
-        //     $: 'jquery',
-        //     jQuery: 'jquery'
-        // })
-    ]
+        new webpack.NamedModulesPlugin()
+    )
 }
+
+module.exports = config;
